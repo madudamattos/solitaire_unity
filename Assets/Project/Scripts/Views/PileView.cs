@@ -1,15 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 
 namespace Solitaire.Views
 {
     public class PileView : MonoBehaviour
     {
         public enum PileType { Tableau, Foundation, Stock, Waste }
-        public PileType Type;
+
+        [SerializeField] public PileType Type;
 
         // lista visual das cartas que estão filhas desta pilha 
-        public List<CardView> CardsInPile = new List<CardView>();
+        private List<CardView> CardsInPile = new List<CardView>();
 
         public Vector3 GetNextCardPosition()
         {
@@ -27,9 +30,19 @@ namespace Solitaire.Views
             CardsInPile.Add(card);
         }
 
-        // public CardView GetLastCard()
-        // {
-        //     return 
-        // }
+        public CardView GetLastCard()
+        {
+            return CardsInPile.Last();
+        }
+
+        public int GetPileCount()
+        {
+            return CardsInPile.Count;
+        }
+
+        public List<CardView> GetCardsInPile()
+        {
+            return CardsInPile;
+        }
     }
 }

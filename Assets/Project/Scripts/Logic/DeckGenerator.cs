@@ -1,7 +1,6 @@
 using System.Linq;
 using Solitaire.Models;
 using System.Collections.Generic;
-using Solitaire.Models;
 
 namespace Solitaire.Logic
 {

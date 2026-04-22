@@ -5,7 +5,7 @@ using Solitaire.Views;
 namespace Solitaire.Logic
 {
     public class Dealer
-    {
+    {   
         public void Deal(List<CardView> cardViews, List<PileView> tableauPiles, PileView stockPile)
         {
             int cardIndex = 0; 
@@ -35,20 +35,23 @@ namespace Solitaire.Logic
             {
                 MoveCardToPile(cardViews[cardIndex], stockPile);
                 cardIndex++;
-            }         
+            }
         }
 
         private void MoveCardToPile(CardView card, PileView pile)
         {
             // teleporta a carta para a posição na pilha;
-            card.transform.position = pile.GetNextCardPosition();
-            
+            if(pile.Type == PileView.PileType.Tableau)
+                card.transform.position = pile.GetNextCardPosition();
+            else 
+                card.transform.position = pile.transform.position;
+                
             // organiza a hierarquia do unity
             card.transform.SetParent(pile.transform);
 
             // adiciona a carta à lista da pilha
             pile.AddCard(card);
-        }        
+        }
 
     }
 }

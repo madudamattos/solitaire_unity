@@ -1,6 +1,7 @@
 using UnityEngine;
 using DG.Tweening; // Usando DOTween para o movimento 
 using Solitaire.Models;
+using Solitaire.Presenters;
 
 namespace Solitaire.Views 
 {
@@ -10,20 +11,22 @@ namespace Solitaire.Views
         [SerializeField] private Sprite cardFront;
         [SerializeField] private Sprite cardBack;
 
-        // A view guarda uma referencia para o model
-        private CardModel _model;
-
-        public void Setup(CardModel model, Sprite front, Sprite back)
+        private CardPresenter _presenter;
+        public void Setup(Sprite front, Sprite back)
         {
-            _model = model; 
             cardFront = front; 
             cardBack = back;
         }
 
-        public void SetFaceUp(bool isFaceUp)
+        public void Bind(CardPresenter presenter) { _presenter = presenter; }
+        public void SetFaceUp(bool isFaceUp){ spriteRenderer.sprite = isFaceUp ? cardFront : cardBack; }
+        public void RequestFlip() { _presenter?.FlipCard(); }
+
+        private void OnDestroy()
         {
-            spriteRenderer.sprite = isFaceUp ? cardFront : cardBack;
-            //transform.DOPunchScale(Vector3.one * 0.1f, 0.2f);
+            _presenter?.Dispose();
+
+            transform.DOKill();
         }
     }
 }

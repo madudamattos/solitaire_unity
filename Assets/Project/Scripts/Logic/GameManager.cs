@@ -43,7 +43,7 @@ namespace Solitaire.Logic
                 
                 Sprite cardSprite = GetSpriteFrontForCard(model.Rank, model.Suit);
                 Sprite cardBackSprite = GetSpriteBackForCard(cardsBack);
-                view.Setup(model, cardSprite, cardBackSprite);
+                view.Setup(cardSprite, cardBackSprite);
             
                 CardPresenter presenter = new CardPresenter(model, view);
                 _cardPresenters.Add(presenter);
@@ -62,9 +62,10 @@ namespace Solitaire.Logic
             // vira a ultima carta de cada pilha do tableau
             foreach(var pile in tableauPiles)
             {
-                if(pile.CardsInPile.Count > 0)
+                if(pile.GetPileCount() > 0)
                 {
                     // pega o ultimo card e chama o flip nele 
+                    pile.GetLastCard().RequestFlip();
                 }
             }
         }
