@@ -1,0 +1,180 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf5f56aa22c542146a2c422c3267668b, type: 3}
+  m_Name: Alt Deck
+  m_EditorClassIdentifier: 
+  cardsBack:
+  - color: 0
+    cardBackSprite: {fileID: 8377660892498022680, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - color: 1
+    cardBackSprite: {fileID: -433670666029108566, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - color: 2
+    cardBackSprite: {fileID: -8552559865685663976, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - color: 3
+    cardBackSprite: {fileID: 6850071573383382763, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  cards:
+  - rank: 1
+    suit: 0
+    cardSprite: {fileID: -8015602716496629025, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 2
+    suit: 0
+    cardSprite: {fileID: 1543271524466354264, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 3
+    suit: 0
+    cardSprite: {fileID: 16512171712424767, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 4
+    suit: 0
+    cardSprite: {fileID: -1899854459020071359, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 5
+    suit: 0
+    cardSprite: {fileID: 1004799789455987659, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 6
+    suit: 0
+    cardSprite: {fileID: 1408526355837041803, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 7
+    suit: 0
+    cardSprite: {fileID: 7772293743256464837, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 8
+    suit: 0
+    cardSprite: {fileID: 7373316886589443600, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 9
+    suit: 0
+    cardSprite: {fileID: 5087696280894743015, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 10
+    suit: 0
+    cardSprite: {fileID: 3406148438248016451, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 11
+    suit: 0
+    cardSprite: {fileID: -7197886455468503514, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 12
+    suit: 0
+    cardSprite: {fileID: -3310820820360713607, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 13
+    suit: 0
+    cardSprite: {fileID: 3938159137638058159, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 1
+    suit: 1
+    cardSprite: {fileID: 5362812241179954904, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 2
+    suit: 1
+    cardSprite: {fileID: 6482534295727591972, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 3
+    suit: 1
+    cardSprite: {fileID: -2574929349390834253, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 4
+    suit: 1
+    cardSprite: {fileID: -19858119321078237, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 5
+    suit: 1
+    cardSprite: {fileID: 5332306843133913856, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 6
+    suit: 1
+    cardSprite: {fileID: -8055256389614355142, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 7
+    suit: 1
+    cardSprite: {fileID: 316718133330025967, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 8
+    suit: 1
+    cardSprite: {fileID: -2368429640310727612, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 9
+    suit: 1
+    cardSprite: {fileID: -9120984682127385225, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 10
+    suit: 1
+    cardSprite: {fileID: 3915234255916429425, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 11
+    suit: 1
+    cardSprite: {fileID: -1509962872242152275, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 12
+    suit: 1
+    cardSprite: {fileID: -5336126241793553272, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 13
+    suit: 1
+    cardSprite: {fileID: -9023041482954960014, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 1
+    suit: 2
+    cardSprite: {fileID: 1238373968832607136, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 2
+    suit: 2
+    cardSprite: {fileID: -3364252963478235582, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 3
+    suit: 2
+    cardSprite: {fileID: -5315407251172718837, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 4
+    suit: 2
+    cardSprite: {fileID: 5844252051249276162, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 5
+    suit: 2
+    cardSprite: {fileID: -4693229376433642301, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 6
+    suit: 2
+    cardSprite: {fileID: 7653361487732526597, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 7
+    suit: 2
+    cardSprite: {fileID: -4002422638983080473, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 8
+    suit: 2
+    cardSprite: {fileID: 1030663210840847766, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 9
+    suit: 2
+    cardSprite: {fileID: 563064050885566589, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 10
+    suit: 2
+    cardSprite: {fileID: 5162319668047967537, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 11
+    suit: 2
+    cardSprite: {fileID: -4615463202923517574, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 12
+    suit: 2
+    cardSprite: {fileID: -6861387176726406227, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 13
+    suit: 2
+    cardSprite: {fileID: 6437866838887046682, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 1
+    suit: 3
+    cardSprite: {fileID: -467872590796705546, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 2
+    suit: 3
+    cardSprite: {fileID: -4120126131310695895, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 3
+    suit: 3
+    cardSprite: {fileID: 3927545055032276733, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 4
+    suit: 3
+    cardSprite: {fileID: 2272901471365635516, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 5
+    suit: 3
+    cardSprite: {fileID: -1080871696032500350, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 6
+    suit: 3
+    cardSprite: {fileID: 3110376122290022186, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 7
+    suit: 3
+    cardSprite: {fileID: -5865499541247452425, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 8
+    suit: 3
+    cardSprite: {fileID: 3961510865622030163, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 9
+    suit: 3
+    cardSprite: {fileID: -2510955049437243680, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 10
+    suit: 3
+    cardSprite: {fileID: -4825729078125685570, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 11
+    suit: 3
+    cardSprite: {fileID: -1441224199907959489, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 12
+    suit: 3
+    cardSprite: {fileID: 5358601097194354281, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
+  - rank: 13
+    suit: 3
+    cardSprite: {fileID: 2620435828420200675, guid: 2ee177719f492439ebcf591e83df2d59, type: 3}
