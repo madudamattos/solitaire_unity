@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 using Solitaire.Presenters;
 using Solitaire.Models;
 using Solitaire.Logic;
+using Solitaire.Core;
 
 namespace Solitaire.Views
 {
@@ -13,14 +15,20 @@ namespace Solitaire.Views
         [SerializeField] private Collider2D _collider; 
         [SerializeField] private CardView _cardView;
 
+        [Header("Physics")]
         [SerializeField] private LayerMask _dropLayerMask;
         private Camera _mainCamera;
         
         [Header("Variables")]
-        private Vector3 _offset;
-        private Vector3 _originalPosition;
-        private int _originalSortingOrder;
         public PileView CurrentPile { get; set; }
+        private List<CardView> _draggedCards = new List<CardView>();
+        private List<Vector3> _offsets = new List<Vector3>();
+        private List<Vector3> _originalPositions = new List<Vector3>();
+        private List<int> _originalSortingOrders = new List<int>();
+
+        // controle de estado
+        private bool _isDragging = false;
+        private int _currentPointerId;
 
         private void Awake()
         {
@@ -34,26 +42,51 @@ namespace Solitaire.Views
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            _originalPosition = transform.position;
+            if(_isDragging) return;
 
-            // _collider.enabled = false;
+            _isDragging = true;
+            _currentPointerId = eventData.pointerId;
+
+            // obtem todas as cartas a partir da carta clicada
+            _draggedCards = CurrentPile.GetCardsFrom(_cardView);
+
+            _offsets.Clear();
+            _originalPositions.Clear();
+            _originalSortingOrders.Clear();
 
             Vector3 mouseWorldPos = GetMouseWorldPosition(eventData.position);
-            _offset = transform.position - mouseWorldPos;
+        
+            for(int i=0; i< _draggedCards.Count; i++)
+            {
+                CardView card = _draggedCards[i];
+                Transform cardTransform = card.transform;
+                SpriteRenderer cardRenderer = card.GetComponentInChildren<SpriteRenderer>();
+                Collider2D cardCollider = card.GetComponentInChildren<Collider2D>();
 
-            _originalSortingOrder = _spriteRenderer.sortingOrder;
-            _spriteRenderer.sortingOrder = 100;
+                _originalPositions.Add(cardTransform.position);
+                _offsets.Add(cardTransform.position - mouseWorldPos);
+                _originalSortingOrders.Add(cardRenderer.sortingOrder);
+                cardRenderer.sortingOrder = 100 + i;
+            }
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            transform.position = GetMouseWorldPosition(eventData.position) + _offset;
+            if(!_isDragging || eventData.pointerId != _currentPointerId) return;
+            Vector3 mouseWorldPos = GetMouseWorldPosition(eventData.position);
+
+            // aplica offset individualmente em cada carta 
+            for(int i=0; i<_draggedCards.Count; i++)
+            {
+                _draggedCards[i].transform.position = mouseWorldPos + _offsets[i];
+            }
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            // _collider.enabled = true;
-            _spriteRenderer.sortingOrder = _originalSortingOrder;
+            if(!_isDragging || eventData.pointerId != _currentPointerId) return;
+
+            _isDragging = false;
 
             // Dispara um raio na posiçao do mouse para ver o que atingimos
             Vector3 mousePos = GetMouseWorldPosition(eventData.position);
@@ -66,37 +99,50 @@ namespace Solitaire.Views
 
                 if(MoveValidator.IsValidMove(modelToMove, targetPile))
                 {
+                    PileView oldPile = CurrentPile;
+
                     // atualiza a logica de posicionamento da carta nas pilhas
-                    CurrentPile.RemoveCard(_cardView);
-                    targetPile.AddCard(_cardView);
+                    foreach(CardView card in _draggedCards)
+                    {
+                        // atualiza o visual
+                        card.transform.position = targetPile.GetNextCardPosition();
+                        card.transform.SetParent(targetPile.transform);
+
+                        // atualiza os estados lógicos da pilha
+                        oldPile.RemoveCard(card);
+                        targetPile.AddCard(card);
+
+                        card.SetSortingOrder(targetPile.GetPileCount());
+                        card.GetComponent<CardInteraction>().CurrentPile = targetPile;
+                    }
                     
                     // vira a ultima carta da pilha antiga 
-                    if(CurrentPile.Type == PileView.PileType.Tableau && CurrentPile.GetPileCount() > 0)
+                    if(oldPile.Type == PileType.Tableau && oldPile.GetPileCount() > 0)
                     {
-                        CardView cardLeftBehind = CurrentPile.GetLastCard();
+                        CardView cardLeftBehind = oldPile.GetLastCard();
                         if(cardLeftBehind.Presenter.Model.IsFaceUp == false)
                             cardLeftBehind.RequestFlip();
                     }
-
-                    // atualiza o visual
-                    transform.position = targetPile.GetNextCardPosition();
-                    transform.SetParent(targetPile.transform);
-                    _cardView.SetSortingOrder(targetPile.GetPileCount());
-
-                    // atualiza current pile para a pilha nova
-                    CurrentPile = targetPile;
-                    Debug.Log("Achou posição certa. Atualizando jogo");
                 }
                 else
                 {
-                    Debug.Log("Encontrou pile view mas a posicao nao é valida");
-                    transform.position = _originalPosition;
+                    ReturnCardsToOriginalPositions();
                 }
             }
             else
             {
-                transform.position = _originalPosition;
-                Debug.Log("Não encontrou pile view, voltando para a posicao original");
+                ReturnCardsToOriginalPositions();
+            }
+
+            _draggedCards.Clear();
+        }
+
+        private void ReturnCardsToOriginalPositions()
+        {
+            for(int i=0; i< _draggedCards.Count; i++)
+            {
+                _draggedCards[i].transform.position = _originalPositions[i];
+                _draggedCards[i].GetComponentInChildren<SpriteRenderer>().sortingOrder = _originalSortingOrders[i]; 
             }
         }
 

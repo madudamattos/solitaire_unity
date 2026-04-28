@@ -7,33 +7,33 @@ namespace Solitaire.Views
     public class CardView : MonoBehaviour
     {
         [Header("Visual References")]
-        [SerializeField] private SpriteRenderer spriteRenderer;
-        [SerializeField] private Collider2D collider;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private Collider2D _collider;
 
         [Header("On initialization references")]
-        [SerializeField] private Sprite cardFront;
-        [SerializeField] private Sprite cardBack;
+        [SerializeField] private Sprite _cardFront;
+        [SerializeField] private Sprite _cardBack;
         
         private CardPresenter _presenter;
 
         public CardPresenter Presenter => _presenter;
          public void Setup(Sprite front, Sprite back)
         {
-            cardFront = front; 
-            cardBack = back;
+            _cardFront = front; 
+            _cardBack = back;
         }
 
         public void Bind(CardPresenter presenter) { _presenter = presenter; }
-        public void SetFaceUp(bool isFaceUp){ spriteRenderer.sprite = isFaceUp ? cardFront : cardBack; }
+        public void SetFaceUp(bool isFaceUp){ _spriteRenderer.sprite = isFaceUp ? _cardFront : _cardBack; }
         public void RequestFlip() { _presenter?.FlipCard(); }
 
         public void SetCollider(bool enable)
         {
-            collider.enabled = enable;
+            _collider.enabled = enable;
         }
         public void SetSortingOrder(int order)
         {
-            spriteRenderer.sortingOrder = order;
+            _spriteRenderer.sortingOrder = order;
         }
 
         public void MoveTo(Vector3 targetPosition, float duration, float delay, System.Action onComplete = null)

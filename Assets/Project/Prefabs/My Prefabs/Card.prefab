@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5450617968091718102}
   - component: {fileID: 7559498023181231802}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -88,7 +88,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6536911181820838591}
   - component: {fileID: 6873110941197910993}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: 'Sprite '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 6824945385379770012}
   - component: {fileID: 2753662098610202563}
   - component: {fileID: 4352754681256869192}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Card
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -212,10 +212,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce41a4846cff4e4584ecd06546e0cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 6873110941197910993}
-  collider: {fileID: 7559498023181231802}
-  cardFront: {fileID: 0}
-  cardBack: {fileID: 0}
+  _spriteRenderer: {fileID: 6873110941197910993}
+  _collider: {fileID: 7559498023181231802}
+  _cardFront: {fileID: 0}
+  _cardBack: {fileID: 0}
 --- !u!114 &4352754681256869192
 MonoBehaviour:
   m_ObjectHideFlags: 0

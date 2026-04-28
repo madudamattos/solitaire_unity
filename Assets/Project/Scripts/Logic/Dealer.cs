@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Solitaire.Views;
-using System;
+using Solitaire.Core;
 
 namespace Solitaire.Logic
 {
@@ -23,7 +24,7 @@ namespace Solitaire.Logic
         {
             int index = 0;
 
-            for(int i=0; i< tableauPiles.Count; i++)
+            for(int i=0; i < tableauPiles.Count; i++)
             {
                 for(int j=0; j<= i; j++)
                 {
@@ -44,7 +45,7 @@ namespace Solitaire.Logic
 
         private void DealToStock(List<CardView> cardViews, PileView stockPile, int startIndex, Action onDealComplete = null)
         {
-            for(int i=0; i<cardViews.Count; i++)
+            for(int i=0; i< cardViews.Count; i++)
             {
                 CardView card = cardViews[startIndex];
                 bool isVeryLastCard =  i == cardViews.Count - 1;
@@ -57,7 +58,7 @@ namespace Solitaire.Logic
         private void MoveCardToPile(CardView card, PileView pile, bool flipOnArrival, Action onArrival = null)
         {
             // estado lógico (imediato)
-            Vector3 targetPosition = pile.Type == PileView.PileType.Tableau? pile.GetNextCardPosition() : pile.transform.position;
+            Vector3 targetPosition = pile.Type == PileType.Tableau? pile.GetNextCardPosition(dealing:true) : pile.transform.position;
 
             card.transform.SetParent(pile.transform);
             pile.AddCard(card);
