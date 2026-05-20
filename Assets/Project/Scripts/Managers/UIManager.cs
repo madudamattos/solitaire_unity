@@ -141,6 +141,7 @@ public class UIManager: MonoBehaviour
     public void UI_ReturnToMenu()
     {
         GameManager.Instance.ReturnToMenu();
+        _settingsPanel.SetActive(false);
     }
 
     public void UI_TriggerAutoComplete()
@@ -151,6 +152,12 @@ public class UIManager: MonoBehaviour
     public void UI_UndoLastMove()
     {
         CommandManager.UndoLastCommand();
+    }
+    
+    public void UI_ResetGame()
+    {
+        _settingsPanel.SetActive(false);
+        GameManager.Instance.ResetGame();
     }
 
 }

@@ -178,7 +178,15 @@ public class GameManager : MonoBehaviour
         OnTimeChanged?.Invoke(ElapsedSeconds);
     }
 
+    public void ResetGame()
+    {
+        _boardManager.ClearBoard();
+        CommandManager.ClearHistory();
+        ChangeState(GameState.Menu);
+    }
+
     public void StartPlay() => ChangeState(GameState.Playing);
     public void StartDeal() => ChangeState(GameState.Dealing);
     public void ReturnToMenu() => ChangeState(GameState.Menu);
+
 }

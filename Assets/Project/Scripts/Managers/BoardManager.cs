@@ -69,59 +69,36 @@ public class BoardManager : MonoBehaviour
 
     public void ClearBoard()
     {
-        // clear stock
-        int count = _stockPile.GetPileCount();
+        ClearPile(_stockPile);
+        ClearPile(_wastePile);
 
-        List<CardView> cards = _stockPile.GetCardsInPile();
-
-        for(int i = 0; i < count; i++)
+        foreach (PileView pile in _foundationPiles)
         {
-            _stockPile.RemoveCard(cards[i]);
+            ClearPile(pile);
         }
 
-        cards.Clear();
-
-        // clear waste
-        count = _wastePile.GetPileCount();
-
-        cards = _wastePile.GetCardsInPile();
-
-        for(int i = 0; i < count; i++)
+        foreach (PileView pile in _tableauPiles)
         {
-            _wastePile.RemoveCard(cards[i]);
+            ClearPile(pile);
         }
+    }
 
-        cards.Clear();
+    private void ClearPile(PileView pile)
+    {
+        if (pile == null) return;
 
-        // clear foundations
-        for(int i=0; i<4; i++)
+        // Instancia uma nova lista contendo os mesmos elementos para permitir a iteração segura
+        List<CardView> cardsToDestroy = new List<CardView>(pile.GetCardsInPile());
+
+        foreach (CardView card in cardsToDestroy)
         {
-            PileView pile = _foundationPiles[i];
-
-            cards = pile.GetCardsInPile();
-
-            for(int j = 0; j < count; j++)
+            pile.RemoveCard(card);
+            
+            // Remove o objeto físico da cena 
+            if (card != null && card.gameObject != null)
             {
-                pile.RemoveCard(cards[j]);
+                Destroy(card.gameObject);
             }
-
-            cards.Clear();
         }
-
-        // clear tableaus
-        for(int i=0; i<7; i++)
-        {
-            PileView pile = _tableauPiles[i];
-
-            cards = pile.GetCardsInPile();
-
-            for(int j = 0; j < count; j++)
-            {
-                pile.RemoveCard(cards[j]);
-            }
-
-            cards.Clear();
-        }
-
     }
 }

@@ -34,9 +34,7 @@ public class MainMenuAnimator : MonoBehaviour
         float currentTime = 0f;
         float maxTime = 0f; // Variável para rastrear o fim exato da timeline
 
-        // ==========================================
-        // PARTE 1: ANIMAÇÃO DAS LETRAS
-        // ==========================================
+        // ANIMAÇÃO DAS LETRAS
         for (int i = 0; i < textAnimator.textInfo.characterCount; i++)
         {
             if (!textAnimator.textInfo.characterInfo[i].isVisible) continue;
@@ -55,9 +53,7 @@ public class MainMenuAnimator : MonoBehaviour
         // A pausa para o início das cartas usa o maxTime
         currentTime = maxTime + _pauseBetweenSequences;
 
-        // ==========================================
-        // PARTE 2: ANIMAÇÃO E FLIP DAS CARTAS
-        // ==========================================
+        // ANIMAÇÃO E FLIP DAS CARTAS
         float[] originalYPositions = new float[_cards.Length];
         float[] originalXScales = new float[_cards.Length];
         
@@ -106,9 +102,8 @@ public class MainMenuAnimator : MonoBehaviour
             currentTime += _jumpDurationCard;
         }
 
-        // ==========================================
         // CONTROLE DO LOOP E PAUSA FINAL
-        // ==========================================
+        
         // Insere um espaço vazio no final da timeline inteira para aplicar a pausa Cartas -> Letras
         _mainSequence.Insert(maxTime, DOVirtual.DelayedCall(_pauseBetweenSequences, () => {}));
         
