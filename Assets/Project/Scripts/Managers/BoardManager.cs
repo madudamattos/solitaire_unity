@@ -32,7 +32,7 @@ public class BoardManager : MonoBehaviour
     {
         bool isWon = false;
         List<PileView> pilesToScan = new List<PileView>(_tableauPiles);
-        pilesToScan.Add(_wastePile);
+        List<CardView> wasteCards = new List<CardView>(_wastePile.GetCardsInPile());
 
         while (!isWon)
         {
@@ -47,20 +47,36 @@ public class BoardManager : MonoBehaviour
                 PileView targetFoundation = MoveValidator.GetValidFoundation(topCard.Presenter.Model, _foundationPiles);
 
                 if (targetFoundation != null)
-                {
+                {                   
                     MoveExecutor.ExecuteMove(new List<CardView> { topCard }, pile, targetFoundation);
                     movedCardInThisLoop = true;
                     
+                    yield return new WaitForSeconds(0.3f); 
+                    break;
+                }
+            }
+
+            foreach (CardView card in wasteCards)
+            {
+                PileView targetFoundation = MoveValidator.GetValidFoundation(card.Presenter.Model, _foundationPiles);
+
+                if (targetFoundation != null)
+                {                 
+                    MoveExecutor.ExecuteMove(new List<CardView> { card }, _wastePile, targetFoundation);
+                    movedCardInThisLoop = true;
                     yield return new WaitForSeconds(0.1f); 
                     break;
                 }
             }
 
+
             if (!movedCardInThisLoop) break;
 
             isWon = WinValidator.CheckForVictory(_foundationPiles);
+
         }
 
+        
         if (isWon)
         {
             OnAutoCompleteFinished?.Invoke();

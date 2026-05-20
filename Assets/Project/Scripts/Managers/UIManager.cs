@@ -75,11 +75,11 @@ public class UIManager: MonoBehaviour
     private void HandleStateChange(GameState state)
     {
         _menuPanel.SetActive(state == GameState.Menu);
-        _gameTable.SetActive(state == GameState.Dealing || state == GameState.Playing);
-         _gamePanel.SetActive(state == GameState.Dealing || state == GameState.Playing);
+        _gameTable.SetActive(state == GameState.Dealing || state == GameState.Playing || state == GameState.AutoComplete);
+        _gamePanel.SetActive(state == GameState.Dealing || state == GameState.Playing || state == GameState.AutoComplete);
         _victoryPanel.SetActive(state == GameState.GameOver);
 
-        if (state != GameState.Playing)
+        if (state != GameState.Playing) 
             _autoCompleteButton.SetActive(false);
     }
 

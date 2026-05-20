@@ -41,14 +41,16 @@ public class GameManager : MonoBehaviour
         CommandManager.OnCommandExecuted += HandleMoveAdded;
         CommandManager.OnCommandUndone += HandleMoveUndone;
         CommandManager.OnHistoryCleared += ResetStats;        
-}
+        _boardManager.OnAutoCompleteFinished += TriggerVictory;
+    }
 
     private void OnDisable()
     {
         MoveExecutor.OnBoardStateChanged -= EvaluateWinCondition;
         CommandManager.OnCommandExecuted -= HandleMoveAdded;
         CommandManager.OnCommandUndone -= HandleMoveUndone;
-        CommandManager.OnHistoryCleared -= ResetStats;     
+        CommandManager.OnHistoryCleared -= ResetStats;  
+        _boardManager.OnAutoCompleteFinished -= TriggerVictory;  
     }
     private void Awake()
     {
@@ -134,7 +136,7 @@ public class GameManager : MonoBehaviour
 
     private void EvaluateWinCondition()
     {
-        if(CurrentState != GameState.Playing) return;
+        if(CurrentState != GameState.Playing || CurrentState == GameState.AutoComplete) return;
 
         if(WinValidator.CheckForVictory(_boardManager._foundationPiles))
         {

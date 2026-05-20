@@ -14,7 +14,7 @@ namespace Solitaire.Logic
 
         public static bool CanAutoComplete(List<PileView> tableauPiles, PileView stockPile, PileView wastePile)
         {
-            if(stockPile.GetPileCount() > 0 || wastePile.GetPileCount() > 0)
+            if(stockPile.GetPileCount() > 0 || wastePile.GetPileCount() > 3 )
                 return false;
 
             foreach(PileView pile in tableauPiles)
