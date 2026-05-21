@@ -10,9 +10,16 @@ namespace Solitaire.Factories
     public class DeckFactory : MonoBehaviour
     {
         [Header("Configs")]
-        [SerializeField] private DeckData _deckData;
         [SerializeField] private GameObject _cardPrefab;
-        [SerializeField] private Back _cardsBack = Back.Blue;
+        private DeckData _deckData;
+        private Back _cardsBack;
+
+        public static DeckFactory Instance { get; private set; }
+        private void Awake()
+        {
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
+        }
 
         public List<CardView> CreateDeck(List<CardModel> models, DeckData deckData, Back backSprite)
         {

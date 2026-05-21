@@ -17,10 +17,6 @@ public class GameManager : MonoBehaviour
     public event Action<GameState> OnStateChanged;
     public event Action<bool> OnAutoCompleteAvailable;
 
-    [Header("Managers")]
-    [SerializeField] private DeckFactory _deckFactory;
-    [SerializeField] private BoardManager _boardManager;
-
     [Header("Game Stats Control")]
     public int Moves {get; private set;}
     public int ElapsedSeconds { get; private set; }
@@ -35,50 +31,70 @@ public class GameManager : MonoBehaviour
     private Back _spriteBack;
     [SerializeField] List<DeckData> _deckList = new List<DeckData>();
 
-    private void OnEnable()
+    private void Awake()
     {
-        MoveExecutor.OnBoardStateChanged += EvaluateWinCondition;
-        CommandManager.OnCommandExecuted += HandleMoveAdded;
-        CommandManager.OnCommandUndone += HandleMoveUndone;
-        CommandManager.OnHistoryCleared += ResetStats;        
-        _boardManager.OnAutoCompleteFinished += TriggerVictory;
+        if(Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     private void OnDisable()
     {
         MoveExecutor.OnBoardStateChanged -= EvaluateWinCondition;
         CommandManager.OnCommandExecuted -= HandleMoveAdded;
-        CommandManager.OnCommandUndone -= HandleMoveUndone;
-        CommandManager.OnHistoryCleared -= ResetStats;  
-        _boardManager.OnAutoCompleteFinished -= TriggerVictory;  
+        CommandManager.OnCommandUndone -= HandleMoveUndone;  
+        BoardManager.Instance.OnAnimationsCompleted -= HandleAutoCompleteFinished;  
     }
-    private void Awake()
-    {
-        if(Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
+    
     void Start()
     {
+        MoveExecutor.OnBoardStateChanged += EvaluateWinCondition;
+        CommandManager.OnCommandExecuted += HandleMoveAdded;
+        CommandManager.OnCommandUndone += HandleMoveUndone;      
+        BoardManager.Instance.OnAnimationsCompleted += HandleAutoCompleteFinished;
+
         ChangeState(GameState.Menu);
     }
 
     public void ChangeState(GameState newState)
     {
+        if(CurrentState == newState) return;
+
+        // Limpeza dos estados anteriores --------------------------------
+        if (CurrentState == GameState.Playing)
+        {
+            if (_timerCoroutine != null)
+            {
+                StopCoroutine(_timerCoroutine);
+                _timerCoroutine = null;
+            }
+        } 
+        else if (CurrentState == GameState.GameOver || CurrentState == GameState.AutoComplete)
+        {
+            BoardManager.Instance.ClearBoard();
+        }
+        // ---------------------------------------------------------------
+
         CurrentState = newState;
         OnStateChanged?.Invoke(CurrentState);
 
         switch(CurrentState)
         {
             case GameState.Menu:
-                // ativa o menu, desativa o jogo
+                CommandManager.ClearHistory();
                 break;
             case GameState.Dealing:
                 InitializeGame();
                 break;
             case GameState.Playing:
-                SetGamePlaying();
+                _timerCoroutine = StartCoroutine(TimerRoutine());
                 break;
-            // ...
+            case GameState.AutoComplete:
+                CommandManager.ClearHistory();
+                BoardManager.Instance.AutoComplete();
+                break;
+            case GameState.GameOver:
+                ResetStats();
+                break;
         }
     }
 
@@ -90,7 +106,7 @@ public class GameManager : MonoBehaviour
 
         _spriteBack = _deck.cardsBack[selectedSprite].color;
 
-        StartDeal();
+        ChangeState(GameState.Dealing);
     }
     private void InitializeGame()
     {
@@ -99,71 +115,36 @@ public class GameManager : MonoBehaviour
         // criação das cartas
         List<CardModel> deckModels = DeckGenerator.CreateFullDeck();
         
-        List<CardView> cardViews = _deckFactory.CreateDeck(deckModels, _deck, _spriteBack);
+        List<CardView> cardViews = DeckFactory.Instance.CreateDeck(deckModels, _deck, _spriteBack);
 
         // organizar cartas em pilhas 
         Dealer dealer = new Dealer();
-        dealer.Deal(cardViews, _boardManager._tableauPiles, _boardManager._stockPile, () => StartPlay());
+        dealer.Deal(cardViews, BoardManager.Instance._tableauPiles, BoardManager.Instance._stockPile, () => ChangeState(GameState.Playing));
     } 
-
-    private void SetGamePlaying()
-    {
-        if (CurrentState == GameState.Playing)
-        {
-            if (_timerCoroutine == null)
-                _timerCoroutine = StartCoroutine(TimerRoutine());
-        }
-        // Se saiu do estado Playing (pausou, venceu, menu), para o relógio
-        else
-        {
-            if (_timerCoroutine != null)
-            {
-                StopCoroutine(_timerCoroutine);
-                _timerCoroutine = null;
-            }
-        }
-    }
-
-    private IEnumerator TimerRoutine()
-    {
-        while(true)
-        {
-            yield return new WaitForSeconds(1f);
-            ElapsedSeconds++;
-            OnTimeChanged?.Invoke(ElapsedSeconds);
-        }
-    }
 
     private void EvaluateWinCondition()
     {
-        if(CurrentState != GameState.Playing || CurrentState == GameState.AutoComplete) return;
+        if(CurrentState != GameState.Playing) return;
 
-        if(WinValidator.CheckForVictory(_boardManager._foundationPiles))
+        if(WinValidator.CheckForVictory(BoardManager.Instance._foundationPiles))
         {
-            TriggerVictory();
+            ChangeState(GameState.GameOver);
             return;
         }
 
-        bool canAuto = WinValidator.CanAutoComplete(_boardManager._tableauPiles, _boardManager._stockPile, _boardManager._wastePile);
+        bool canAuto = BoardManager.Instance.CanTriggerAutoComplete();
         OnAutoCompleteAvailable?.Invoke(canAuto);
     }      
 
-    private void TriggerVictory()
+    private void HandleAutoCompleteFinished()
     {
-        ChangeState(GameState.GameOver);
-        Debug.Log("Congratulations! You won.");
+        ChangeState(GameState.Playing); 
+
+        if (BoardManager.Instance.IsGameWon())
+        {
+            ChangeState(GameState.GameOver);
+        }
     }
-
-    public void StartAutoComplete()
-    {
-        ChangeState(GameState.AutoComplete);
-        CommandManager.ClearHistory();
-
-        _boardManager.RunAutoComplete();
-    }
-
-    private void HandleMoveAdded() => OnMovesChanged?.Invoke(++Moves);
-    private void HandleMoveUndone() => OnMovesChanged?.Invoke(--Moves);
 
     private void ResetStats()
     {
@@ -180,15 +161,19 @@ public class GameManager : MonoBehaviour
         OnTimeChanged?.Invoke(ElapsedSeconds);
     }
 
-    public void ResetGame()
+    private IEnumerator TimerRoutine()
     {
-        _boardManager.ClearBoard();
-        CommandManager.ClearHistory();
-        ChangeState(GameState.Menu);
+        while(true)
+        {
+            yield return new WaitForSeconds(1f);
+            ElapsedSeconds++;
+            OnTimeChanged?.Invoke(ElapsedSeconds);
+        }
     }
 
-    public void StartPlay() => ChangeState(GameState.Playing);
-    public void StartDeal() => ChangeState(GameState.Dealing);
-    public void ReturnToMenu() => ChangeState(GameState.Menu);
+    private void HandleMoveAdded() => OnMovesChanged?.Invoke(++Moves);
+    private void HandleMoveUndone() => OnMovesChanged?.Invoke(--Moves);
+
 
 }
+

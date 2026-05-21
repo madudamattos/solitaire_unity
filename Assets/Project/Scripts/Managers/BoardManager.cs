@@ -13,17 +13,17 @@ public class BoardManager : MonoBehaviour
     public List<PileView> _foundationPiles;
     public List<PileView> _tableauPiles;
 
-    public event Action OnAutoCompleteFinished;
+    public event Action OnAnimationsCompleted;
 
-    // public static BoardManager Instance { get; private set; }
+    public static BoardManager Instance { get; private set; }
 
-    // private void Awake()
-    // {
-    //     if (Instance == null) Instance = this;
-    //     else Destroy(gameObject);
-    // }
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
-    public void RunAutoComplete()
+    public void AutoComplete()
     {
         StartCoroutine(AutoCompleteRoutine());
     }
@@ -31,11 +31,12 @@ public class BoardManager : MonoBehaviour
     private IEnumerator AutoCompleteRoutine()
     {
         bool isWon = false;
-        List<PileView> pilesToScan = new List<PileView>(_tableauPiles);
-        List<CardView> wasteCards = new List<CardView>(_wastePile.GetCardsInPile());
 
         while (!isWon)
         {
+            List<PileView> pilesToScan = new List<PileView>(_tableauPiles);
+            List<CardView> wasteCards = new List<CardView>(_wastePile.GetCardsInPile());
+
             bool movedCardInThisLoop = false;
 
             foreach (PileView pile in pilesToScan)
@@ -71,16 +72,9 @@ public class BoardManager : MonoBehaviour
 
 
             if (!movedCardInThisLoop) break;
-
-            isWon = WinValidator.CheckForVictory(_foundationPiles);
-
         }
-
         
-        if (isWon)
-        {
-            OnAutoCompleteFinished?.Invoke();
-        }
+        OnAnimationsCompleted?.Invoke();
     }
 
     public void ClearBoard()
@@ -116,5 +110,15 @@ public class BoardManager : MonoBehaviour
                 Destroy(card.gameObject);
             }
         }
+    }
+
+    public bool IsGameWon()
+    {
+        return WinValidator.CheckForVictory(_foundationPiles);
+    }
+
+    public bool CanTriggerAutoComplete()
+    {
+        return WinValidator.CanAutoComplete(_tableauPiles, _stockPile, _wastePile);
     }
 }

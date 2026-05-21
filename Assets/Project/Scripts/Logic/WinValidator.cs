@@ -6,6 +6,7 @@ namespace Solitaire.Logic
 {
     public static class WinValidator
     {
+        
         public static bool CheckForVictory(List<PileView> foundationPiles)
         {
             // O jogo é vencido se todas as 4 foundations tiverem exatamente 13 cartas

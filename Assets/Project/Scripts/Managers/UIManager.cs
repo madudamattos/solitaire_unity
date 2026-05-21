@@ -41,7 +41,15 @@ public class UIManager: MonoBehaviour
     [SerializeField] private GameObject _cardSpriteLayout1;
     [SerializeField] private GameObject _cardSpriteLayout2;
 
-    private void OnEnable()
+    public static UIManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if(Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    private void Start()
     {
         GameManager.Instance.OnStateChanged += HandleStateChange;
         GameManager.Instance.OnAutoCompleteAvailable += ToggleAutoCompleteButton;
@@ -50,10 +58,7 @@ public class UIManager: MonoBehaviour
         CommandManager.OnCommandExecuted += UpdateUndoButton;
         CommandManager.OnCommandUndone += UpdateUndoButton;
         CommandManager.OnHistoryCleared += UpdateUndoButton;
-    }
 
-    private void Start()
-    {
         UpdateUndoButton();
     }
 
@@ -70,17 +75,6 @@ public class UIManager: MonoBehaviour
         CommandManager.OnCommandExecuted -= UpdateUndoButton;
         CommandManager.OnCommandUndone -= UpdateUndoButton;
         CommandManager.OnHistoryCleared -= UpdateUndoButton;
-    }
-
-    private void HandleStateChange(GameState state)
-    {
-        _menuPanel.SetActive(state == GameState.Menu);
-        _gameTable.SetActive(state == GameState.Dealing || state == GameState.Playing || state == GameState.AutoComplete);
-        _gamePanel.SetActive(state == GameState.Dealing || state == GameState.Playing || state == GameState.AutoComplete);
-        _victoryPanel.SetActive(state == GameState.GameOver);
-
-        if (state != GameState.Playing) 
-            _autoCompleteButton.SetActive(false);
     }
 
     private void ToggleAutoCompleteButton(bool isAvailable)
@@ -117,47 +111,53 @@ public class UIManager: MonoBehaviour
         _cardSpriteLayout2.SetActive(!active);
     }
 
-    public void UI_StartGameWithSettings()
+    public void ToggleSettingsPanel()
+    {
+        _settingsPanel.SetActive(true); 
+    }
+
+    private void HandleStateChange(GameState state)
+    {
+        _menuPanel.SetActive(state == GameState.Menu);
+        _settingsPanel.SetActive(state == GameState.Menu);
+
+        _gameTable.SetActive(state == GameState.Dealing || state == GameState.Playing || state == GameState.AutoComplete);
+        _gamePanel.SetActive(state == GameState.Dealing || state == GameState.Playing || state == GameState.AutoComplete);
+        
+        _victoryPanel.SetActive(state == GameState.GameOver);
+
+        if (state != GameState.Playing) 
+            _autoCompleteButton.SetActive(false);
+    }
+
+    public void UI_StartNewGame()
     {
         int selectedDifficulty = _toggleDiff1.isOn ? 1 : 3;
         int selectedDeck = _toggleDeck1.isOn ? 0 : 1;
         int selectedSprite = 0;
 
-        if (_toggleSprite1.isOn) selectedSprite = 0;
-        else if (_toggleSprite2.isOn) selectedSprite = 1;
-        else if (_toggleSprite3.isOn) selectedSprite = 2;
-        else if (_toggleSprite4.isOn) selectedSprite = 3;  
-
-        _menuPanel.SetActive(false);
+        Toggle[] spriteToggles = { _toggleSprite1, _toggleSprite2, _toggleSprite3, _toggleSprite4 };
+        for (int i = 0; i < spriteToggles.Length; i++)
+        {
+            if (spriteToggles[i].isOn) selectedSprite = i;
+        }
 
         GameManager.Instance.StartNewGame(selectedDifficulty, selectedDeck, selectedSprite);
     }
 
-    public void UI_Play()
-    {
-        _settingsPanel.SetActive(true); 
-    }
-
     public void UI_ReturnToMenu()
     {
-        GameManager.Instance.ReturnToMenu();
-        _settingsPanel.SetActive(false);
+        GameManager.Instance.ChangeState(GameState.Menu);
     }
 
-    public void UI_TriggerAutoComplete()
+    public void UI_AutoComplete()
     {
-        GameManager.Instance.StartAutoComplete();
+        GameManager.Instance.ChangeState(GameState.AutoComplete);
     }
 
     public void UI_UndoLastMove()
     {
         CommandManager.UndoLastCommand();
-    }
-    
-    public void UI_ResetGame()
-    {
-        _settingsPanel.SetActive(false);
-        GameManager.Instance.ResetGame();
     }
 
 }

@@ -1649,7 +1649,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1657677295}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: UI_Play
+        m_MethodName: ToggleSettingsPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7250,7 +7250,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1627009804
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7376,9 +7376,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1657677293}
   - component: {fileID: 1657677294}
-  - component: {fileID: 1657677295}
-  - component: {fileID: 1657677296}
   - component: {fileID: 1657677297}
+  - component: {fileID: 1657677296}
+  - component: {fileID: 1657677295}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -7413,8 +7413,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3098c3b9fabd8e46a3e11e7c3d3f08e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deckFactory: {fileID: 1657677297}
-  _boardManager: {fileID: 1657677296}
   _deckList:
   - {fileID: 11400000, guid: 6d07edd1ca3e90a46bd489ce599d6d33, type: 2}
   - {fileID: 11400000, guid: aa4c6b40ca93fa94cbe31f5449f00108, type: 2}
@@ -7488,9 +7486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b6421f56302f4d4d967c49bf7843ea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deckData: {fileID: 11400000, guid: 6d07edd1ca3e90a46bd489ce599d6d33, type: 2}
   _cardPrefab: {fileID: 5958802484391946004, guid: 92808114626762f4f9e55e33391f93b6, type: 3}
-  _cardsBack: 3
 --- !u!1 &1673948196
 GameObject:
   m_ObjectHideFlags: 0
@@ -7974,7 +7970,7 @@ GameObject:
   - component: {fileID: 1802907851}
   - component: {fileID: 1802907850}
   m_Layer: 5
-  m_Name: Play Button (1)
+  m_Name: Start Game Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8046,7 +8042,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1657677295}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: UI_StartGameWithSettings
+        m_MethodName: UI_StartNewGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8303,7 +8299,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1657677295}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: UI_TriggerAutoComplete
+        m_MethodName: UI_AutoComplete
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9643,7 +9639,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1657677295}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: UI_ResetGame
+        m_MethodName: UI_ReturnToMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
