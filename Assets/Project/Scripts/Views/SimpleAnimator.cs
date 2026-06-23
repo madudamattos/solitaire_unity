@@ -2,12 +2,16 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 
+/// <summary>
+/// A visual utility component responsible for animating TextMeshPro text.
+/// Applies a continuous, wave-like vertical jumping sequence to individual characters using DOTween.
+/// </summary>
 public class SimpleAnimator : MonoBehaviour
 {
-    [Header("Referências")]
+    [Header("References")]
     [SerializeField] private TMP_Text _titleText;
 
-    [Header("Configurações de Animação")]
+    [Header("Animation Settings")]
     [SerializeField] private float _jumpHeight = 12f;
     [SerializeField] private float _jumpDuration = 0.2f;
     [SerializeField] private float _pauseBetweenSequences = 0.35f;
@@ -19,6 +23,10 @@ public class SimpleAnimator : MonoBehaviour
         BuildAndPlaySequence();
     }
 
+    /// <summary>
+    /// Constructs the DOTween sequence by iterating through the text mesh characters.
+    /// Calculates precise timeline insertions to stagger the animation of each letter.
+    /// </summary>
     private void BuildAndPlaySequence()
     {
         _titleText.ForceMeshUpdate();
@@ -27,9 +35,9 @@ public class SimpleAnimator : MonoBehaviour
         _mainSequence = DOTween.Sequence();
         
         float currentTime = 0f;
-        float maxTime = 0f; // Variável para rastrear o fim exato da timeline
+        float maxTime = 0f; // Variable to track the exact end of the timeline
 
-        // ANIMAÇÃO DAS LETRAS
+        // LETTER ANIMATION
         for (int i = 0; i < textAnimator.textInfo.characterCount; i++)
         {
             if (!textAnimator.textInfo.characterInfo[i].isVisible) continue;
@@ -40,21 +48,24 @@ public class SimpleAnimator : MonoBehaviour
 
             _mainSequence.Insert(currentTime, charJump);
             
-            // O tempo máximo da letra é o tempo atual + ida e volta
+            // The maximum time for the letter is the current time + round trip
             maxTime = currentTime + (_jumpDuration * 2);
             currentTime += _jumpDuration;
         }
 
-        // A pausa para o início das cartas usa o maxTime
+        // The pause before the sequence restarts uses the maxTime
         currentTime = maxTime + _pauseBetweenSequences;
 
-        // CONTROLE DO LOOP E PAUSA FINAL
-        
+        // LOOP CONTROL AND FINAL PAUSE
         _mainSequence.Insert(maxTime, DOVirtual.DelayedCall(_pauseBetweenSequences, () => {}));
         
         _mainSequence.SetLoops(-1);
     }
 
+    /// <summary>
+    /// Safely kills the active DOTween sequence upon object destruction to prevent memory leaks 
+    /// and null reference exceptions in the animation loop.
+    /// </summary>
     private void OnDestroy()
     {
         if (_mainSequence != null)

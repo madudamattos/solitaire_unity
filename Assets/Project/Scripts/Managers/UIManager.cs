@@ -6,7 +6,12 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 
-public class UIManager: MonoBehaviour
+/// <summary>
+/// Global manager responsible for the user interface layer. 
+/// Operates reactively by listening to events from the <c>GameManager</c> and <c>CommandManager</c> 
+/// to update text, toggles, and panels without holding core business logic.
+/// </summary>
+public class UIManager : MonoBehaviour
 {
     [Header("Panels")]
     [SerializeField] private GameObject _menuPanel;
@@ -41,6 +46,7 @@ public class UIManager: MonoBehaviour
     [SerializeField] private GameObject _cardSpriteLayout1;
     [SerializeField] private GameObject _cardSpriteLayout2;
 
+    /// <summary> Global Singleton access point for the UI Manager. </summary>
     public static UIManager Instance { get; private set; }
 
     private void Awake()
@@ -49,7 +55,7 @@ public class UIManager: MonoBehaviour
         else Destroy(gameObject);
     }
 
-    private void Start()
+    public void OnEnable()
     {
         GameManager.Instance.OnStateChanged += HandleStateChange;
         GameManager.Instance.OnAutoCompleteAvailable += ToggleAutoCompleteButton;
@@ -58,7 +64,10 @@ public class UIManager: MonoBehaviour
         CommandManager.OnCommandExecuted += UpdateUndoButton;
         CommandManager.OnCommandUndone += UpdateUndoButton;
         CommandManager.OnHistoryCleared += UpdateUndoButton;
+    }
 
+    private void Start()
+    {
         UpdateUndoButton();
     }
 
@@ -94,33 +103,40 @@ public class UIManager: MonoBehaviour
 
     private void UpdateTimeText(int seconds)
     {
-        // Formata os segundos totais para o padrão MM:SS
+        // Formats the total seconds into the MM:SS layout
         TimeSpan time = TimeSpan.FromSeconds(seconds);
         _timerText.text = "TIMER: " + time.ToString(@"hh\:mm\:ss");
     }
 
+    /// <summary> Toggles the alternative deck layout preview in the settings menu. </summary>
     public void ToggleAltDeck(bool active)
     {
         _cardSpriteLayout1.SetActive(!active);
         _cardSpriteLayout2.SetActive(active);
     }
 
+    /// <summary> Toggles the base deck layout preview in the settings menu. </summary>
     public void ToggleBaseDeck(bool active)
     {
         _cardSpriteLayout1.SetActive(active);
         _cardSpriteLayout2.SetActive(!active);
     }
 
+    /// <summary> Opens the settings configuration panel. </summary>
     public void ToggleSettingsPanel()
     {
         _settingsPanel.SetActive(true); 
     }
 
+    /// <summary>
+    /// Reacts to changes in the game's Finite State Machine, activating or deactivating 
+    /// UI panels to reflect the current context.
+    /// </summary>
+    /// <param name="state">The new active game state.</param>
     private void HandleStateChange(GameState state)
     {
         _menuPanel.SetActive(state == GameState.Menu);
-        _settingsPanel.SetActive(state == GameState.Menu);
-
+        
         _gameTable.SetActive(state == GameState.Dealing || state == GameState.Playing || state == GameState.AutoComplete);
         _gamePanel.SetActive(state == GameState.Dealing || state == GameState.Playing || state == GameState.AutoComplete);
         
@@ -128,8 +144,19 @@ public class UIManager: MonoBehaviour
 
         if (state != GameState.Playing) 
             _autoCompleteButton.SetActive(false);
+
+        if(state != GameState.Menu)
+            _settingsPanel.SetActive(false);
     }
 
+    // ==============================================================================
+    // UI ENDPOINTS - Triggered directly by Unity Canvas Buttons
+    // ==============================================================================
+
+    /// <summary>
+    /// UI Event endpoint. Reads the active toggle configurations from the settings panel 
+    /// and requests the GameManager to bootstrap a new session.
+    /// </summary>
     public void UI_StartNewGame()
     {
         int selectedDifficulty = _toggleDiff1.isOn ? 1 : 3;
@@ -145,19 +172,21 @@ public class UIManager: MonoBehaviour
         GameManager.Instance.StartNewGame(selectedDifficulty, selectedDeck, selectedSprite);
     }
 
+    /// <summary> UI Event endpoint. Requests the GameManager to revert to the main menu state. </summary>
     public void UI_ReturnToMenu()
     {
         GameManager.Instance.ChangeState(GameState.Menu);
     }
 
+    /// <summary> UI Event endpoint. Triggers the automated victory sequence. </summary>
     public void UI_AutoComplete()
     {
         GameManager.Instance.ChangeState(GameState.AutoComplete);
     }
 
+    /// <summary> UI Event endpoint. Requests the CommandManager to revert the last player action. </summary>
     public void UI_UndoLastMove()
     {
         CommandManager.UndoLastCommand();
     }
-
 }

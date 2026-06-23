@@ -7,6 +7,16 @@ using Solitaire.Views;
 
 namespace Solitaire.Factories
 {
+    /// <summary>
+    /// Factory class responsible for instantiating the visual card objects within the Unity scene. 
+    /// Follows the Singleton pattern to ensure a single point of creation for the deck.
+    /// </summary>
+    /// <remarks>
+    /// Deck creation is initiated by a user action routed through the UI. It receives the logical deck model, 
+    /// the selected deck configuration (the <c>DeckData</c> mapping logical cards to sprites), and the 
+    /// enumerated value for the card back color directly from the <c>GameManager</c>. 
+    /// This class also requires a predefined Card Prefab to instantiate the physical card objects within the Unity scene.
+    /// </remarks>
     public class DeckFactory : MonoBehaviour
     {
         [Header("Configs")]
@@ -21,9 +31,17 @@ namespace Solitaire.Factories
             else Destroy(gameObject);
         }
 
-        public List<CardView> CreateDeck(List<CardModel> models, DeckData deckData, Back backSprite)
+        /// <summary>
+        /// Instantiates the visual card GameObjects based on the provided logical models, 
+        /// assigns the correct sprites, and binds them using the Presenter.
+        /// </summary>
+        /// <param name="models">The list of logical card models to be instantiated.</param>
+        /// <param name="deckData">The ScriptableObject containing the visual asset mappings for the deck.</param>
+        /// <param name="backSpriteColor">The chosen color for the card back sprite.</param>
+        /// <returns>A list containing the instantiated and initialized <c>CardView</c> components.</returns>
+        public List<CardView> CreateDeck(List<CardModel> models, DeckData deckData, Back backSpriteColor)
         {
-            _cardsBack = backSprite;
+            _cardsBack = backSpriteColor;
             _deckData = deckData;  
              
             List<CardView> cardViews = new List<CardView>();

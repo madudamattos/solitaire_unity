@@ -2,13 +2,18 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 
+/// <summary>
+/// Manages the idle animation sequence for the main menu.
+/// Combines a staggered text wave effect with a cascading jump-and-flip physical animation 
+/// for background card elements.
+/// </summary>
 public class MainMenuAnimator : MonoBehaviour
 {
-    [Header("Referências")]
+    [Header("References")]
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private Transform[] _cards;
 
-    [Header("Configurações de Animação")]
+    [Header("Animation Settings")]
     [SerializeField] private float _jumpHeight = 12f;
     [SerializeField] private float _jumpHeightCard = 80f;
     [SerializeField] private float _jumpDuration = 0.2f;
@@ -24,6 +29,10 @@ public class MainMenuAnimator : MonoBehaviour
         BuildAndPlaySequence();
     }
 
+    /// <summary>
+    /// Builds and executes the complex DOTween sequence. Synchronizes the TextMeshPro character 
+    /// offsets with the spatial transformation and scale manipulation (fake 3D flip) of the card objects.
+    /// </summary>
     private void BuildAndPlaySequence()
     {
         _titleText.ForceMeshUpdate();
@@ -32,9 +41,9 @@ public class MainMenuAnimator : MonoBehaviour
         _mainSequence = DOTween.Sequence();
         
         float currentTime = 0f;
-        float maxTime = 0f; // Variável para rastrear o fim exato da timeline
+        float maxTime = 0f; // Variable to track the exact end of the timeline
 
-        // ANIMAÇÃO DAS LETRAS
+        // LETTER ANIMATION
         for (int i = 0; i < textAnimator.textInfo.characterCount; i++)
         {
             if (!textAnimator.textInfo.characterInfo[i].isVisible) continue;
@@ -45,15 +54,15 @@ public class MainMenuAnimator : MonoBehaviour
 
             _mainSequence.Insert(currentTime, charJump);
             
-            // O tempo máximo da letra é o tempo atual + ida e volta
+            // The maximum time for the letter is the current time + round trip
             maxTime = currentTime + (_jumpDuration * 2);
             currentTime += _jumpDuration;
         }
 
-        // A pausa para o início das cartas usa o maxTime
+        // The pause before the cards start uses the maxTime
         currentTime = maxTime + _pauseBetweenSequences;
 
-        // ANIMAÇÃO E FLIP DAS CARTAS
+        // CARD ANIMATION AND FLIP
         float[] originalYPositions = new float[_cards.Length];
         float[] originalXScales = new float[_cards.Length];
         
@@ -70,12 +79,12 @@ public class MainMenuAnimator : MonoBehaviour
             Transform card = _cards[i];
             float cardStartTime = currentTime;
 
-            // 1. Subida e Descida mantendo o Yoyo
+            // 1. Up and Down movement maintaining the Yoyo effect
             _mainSequence.Insert(cardStartTime, card.DOLocalMoveY(originalYPositions[i] + _jumpHeightCard, _jumpDurationCard)
                 .SetEase(Ease.OutQuad)
                 .SetLoops(2, LoopType.Yoyo));
 
-            // 2. Flip inicia exatamente após o Yoyo terminar (2 * _jumpDurationCard)
+            // 2. Flip begins exactly after the Yoyo finishes (2 * _jumpDurationCard)
             float flipStartTime = cardStartTime + (_jumpDurationCard * 2);
 
             _mainSequence.Insert(flipStartTime, card.DOScaleX(0f, halfFlip).SetEase(Ease.InSine));
@@ -91,25 +100,29 @@ public class MainMenuAnimator : MonoBehaviour
 
             _mainSequence.Insert(flipStartTime + halfFlip, card.DOScaleX(originalXScales[i], halfFlip).SetEase(Ease.OutSine));
 
-            // Rastreia o momento mais tardio que a sequência alcança
+            // Tracks the latest moment reached by the sequence
             float thisCardEndTime = flipStartTime + _flipDuration;
             if (thisCardEndTime > maxTime)
             {
                 maxTime = thisCardEndTime;
             }
 
-            // O avanço para a próxima carta continua o mesmo (cascata)
+            // The advance to the next card maintains the cascade effect
             currentTime += _jumpDurationCard;
         }
 
-        // CONTROLE DO LOOP E PAUSA FINAL
+        // LOOP CONTROL AND FINAL PAUSE
         
-        // Insere um espaço vazio no final da timeline inteira para aplicar a pausa Cartas -> Letras
+        // Inserts an empty space at the end of the entire timeline to apply the Cards -> Letters pause
         _mainSequence.Insert(maxTime, DOVirtual.DelayedCall(_pauseBetweenSequences, () => {}));
         
         _mainSequence.SetLoops(-1);
     }
 
+    /// <summary>
+    /// Safely kills the active DOTween sequence upon object destruction to prevent memory leaks 
+    /// and null reference exceptions.
+    /// </summary>
     private void OnDestroy()
     {
         if (_mainSequence != null)
